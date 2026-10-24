@@ -14,6 +14,11 @@ Link the book you are reading to its entry on a NeoDB server, then keep your sta
 
 ## Install
 
+The interface follows KOReader's language setting: Simplified Chinese is fully
+translated, and English uses the original labels. Generated note titles and the
+quote introduction follow the same language; your book metadata and note text
+are never translated. Restart KOReader after changing its interface language.
+
 **From a plugin store**, which handles updates afterwards: search for **NeoDB** in [Storefront](https://github.com/ultimatejimmy/storefront.koplugin) or [AppStore](https://github.com/omer-faruq/appstore.koplugin).
 
 **Manually**: download `neodb.koplugin.zip` from [the latest release](https://github.com/neodb-social/neodb.koplugin/releases/latest) and unzip it into KOReader's `plugins` folder. The zip already holds a correctly named folder, so there is nothing to rename.
@@ -54,7 +59,47 @@ Most features are under the **☰ → Tools → NeoDB** menu:
 - **Post something…** writes a post with no book attached.
 - **Settings for this book** holds that book's own switches.
 
-To share one quote, select the text and choose **Share on NeoDB** from the selection menu.
+Choose **添加笔记&分享** to save a note on that passage in KOReader and share it
+to NeoDB together. The quote button cycles through four modes:
+
+- **引用：正文下方 / Quote: below note** (default): append the quote when posting.
+- **引用：正文上方 / Quote: above note**: prepend the quote when posting.
+- **引用：无 / Quote: none**: post only your note, without a quote or introduction.
+- **引用：自定义 / Quote: custom**: put the quote and a blank line directly in the
+  editor before your notes, so you can freely edit the whole post. Nothing is
+  automatically added when posting.
+
+The automatic modes keep the editor and local note free of the added quote.
+Custom mode saves the entire edited body locally when local saving is on,
+including any quote you leave in it. Switching modes preserves separate plain
+and custom drafts. None and custom require a non-empty body. Set the initial
+choices under **NeoDB → Settings → Selection sharing defaults**. Changes made
+in a composer apply only to that post. Cancelling creates no new highlight;
+offline sharing saves the local note immediately and queues the post.
+The **保存到本地：开 / 关** control below the editor defaults to on unless changed
+in settings. Turn it off
+to share without creating or editing local highlights or notes. With it on, an
+empty note body saves a highlight only; with it off, a bare quote can still be
+shared. The old **Share on NeoDB** selection-menu entry is replaced by this option.
+The **Selection sharing defaults** submenu contains the quote mode, attaching
+reading progress, local saving, visibility, block quote formatting and
+crossposting. Existing visibility, formatting and crossposting preferences are
+preserved and still apply to the other NeoDB actions that already use them.
+**Highlight & share** respects the progress, visibility, formatting and
+crossposting settings, and always saves the highlight and shares the quote.
+
+The optional NeoDB title has its own single-line field above the note body in
+the same window. The body scrolls and resizes when the keyboard opens or closes.
+The title starts as **📖 读书笔记｜《书名》· 章名 · 48%**, using the current
+book, chapter and live reading percentage. It can be edited or cleared; an
+unavailable chapter is omitted.
+
+**高亮&分享** saves the selection as a highlight and shares it immediately,
+without opening a composer or picker. The post uses the same generated title
+and contains only **引文如下：👇** followed by the quote, with no note text.
+Offline posts wait in the upload queue. Sign in and link the book beforehand;
+if either is missing, the highlight is still saved and a brief notification
+explains why it could not be shared.
 
 To update reading progress once an hour, turn on **Settings for this book → Update reading progress automatically**.
 

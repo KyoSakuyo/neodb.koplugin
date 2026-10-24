@@ -27,7 +27,7 @@ local UIManager = require("ui/uimanager")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local logger = require("logger")
 local util = require("util")
-local _ = require("gettext")
+local _ = require("neodb_i18n")
 local T = require("ffi/util").template
 
 local Actions = require("neodb_actions")
@@ -248,31 +248,26 @@ end
 -- Highlight menu ------------------------------------------------------------
 
 --[[--
-Adds "Share on NeoDB" to the text selection menu.
+Adds sharing and saving a local note to the text selection menu.
 
 Sharing a quote is the one action worth reaching from inside the text, and the
 highlight menu is where the reader already is when they have something to say.
 ]]
 function NeoDB:addHighlightAction()
     if not self.ui.highlight then return end
-    self.ui.highlight:addToHighlightDialog("13_neodb_quote", function(this, index)
+    self.ui.highlight:addToHighlightDialog("14_neodb_note", function(this, index)
         return {
-            text = _("Share on NeoDB"),
+            text = _("Add note & share"),
             callback = function()
-                local text = util.cleanupSelectedText(this.selected_text.text)
-                --[[--
-                An `index` means this is not a fresh selection but a highlight the
-                book already holds, reached through the edit dialog's "…" button.
-                The mirror is watching that one, so the composer has to say which
-                annotation it is posting or both of them will post it.
-                ]]
-                local shared = index and self.ui.annotation
-                    and self.ui.annotation.annotations[index] or nil
-                this:onClose()
-                Actions.addNote(self.ctx, {
-                    quote = text,
-                    annotation_key = type(shared) == "table" and shared.datetime or nil,
-                })
+                Actions.addNoteAndShare(self.ctx, this, index)
+            end,
+        }
+    end)
+    self.ui.highlight:addToHighlightDialog("15_neodb_highlight", function(this, index)
+        return {
+            text = _("Highlight & share"),
+            callback = function()
+                Actions.highlightAndShare(self.ctx, this, index)
             end,
         }
     end)
@@ -759,13 +754,63 @@ function NeoDB:settingsMenu()
         })
     end
 
-    return {
+    local quote_items = {}
+    local quote_modes = {
+        { key = "after", text = _("Quote: below note") },
+        { key = "before", text = _("Quote: above note") },
+        { key = "none", text = _("Quote: none") },
+        { key = "custom", text = _("Quote: custom") },
+    }
+    for _idx, mode in ipairs(quote_modes) do
+        table.insert(quote_items, {
+            text = mode.text,
+            radio = true,
+            checked_func = function() return store:get("quote_position") == mode.key end,
+            callback = function() store:set("quote_position", mode.key) end,
+        })
+    end
+    local sharing_defaults = {
+        {
+            text = _("Default quote mode"),
+            sub_item_table = quote_items,
+        },
+        {
+            text = _("Attach reading progress by default"),
+            checked_func = function() return store:get("note_attach_progress") end,
+            callback = function() store:toggle("note_attach_progress") end,
+        },
+        {
+            text = _("Save notes locally by default"),
+            help_text = _("Sets the initial local-save option in Add note & share. Highlight & share always saves a highlight."),
+            checked_func = function() return store:get("note_save_local") end,
+            callback = function() store:toggle("note_save_local") end,
+        },
         {
             text_func = function()
                 return T(_("Default visibility: %1"),
                     Util.visibilityLabel(store:get("default_visibility")))
             end,
             sub_item_table = visibility_items,
+        },
+        {
+            text = _("Quote highlights as block quotes"),
+            help_text = _("Prefixes shared highlights with \"> \" so they read as a quotation."),
+            checked_func = function() return store:get("quote_as_blockquote") end,
+            callback = function() store:toggle("quote_as_blockquote") end,
+        },
+        {
+            text = _("Crosspost to connected social networks"),
+            help_text = _("Ratings, notes and comments are always saved to NeoDB. This also announces them to your followers."),
+            checked_func = function() return store:get("post_to_fediverse") end,
+            callback = function() store:toggle("post_to_fediverse") end,
+        },
+    }
+
+    return {
+        {
+            text = _("Selection sharing defaults"),
+            help_text = _("Initial choices when sharing selected text. Changes in the composer apply only to that post. Visibility and crossposting also apply to other NeoDB posts; quote formatting also applies to highlight uploads."),
+            sub_item_table = sharing_defaults,
         },
         {
             text_func = function()
@@ -834,18 +879,6 @@ function NeoDB:settingsMenu()
             help_text = _("When you reach the last page of a linked book, set its NeoDB status to Finished."),
             checked_func = function() return store:get("auto_mark_finished") end,
             callback = function() store:toggle("auto_mark_finished") end,
-        },
-        {
-            text = _("Quote highlights as block quotes"),
-            help_text = _("Prefixes shared highlights with \"> \" so they read as a quotation."),
-            checked_func = function() return store:get("quote_as_blockquote") end,
-            callback = function() store:toggle("quote_as_blockquote") end,
-        },
-        {
-            text = _("Crosspost to connected social networks"),
-            help_text = _("Ratings, notes and comments are always saved to NeoDB. This also announces them to your followers."),
-            checked_func = function() return store:get("post_to_fediverse") end,
-            callback = function() store:toggle("post_to_fediverse") end,
         },
         {
             text = _("Crosspost shared highlights"),

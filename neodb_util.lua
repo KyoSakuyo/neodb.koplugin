@@ -11,7 +11,7 @@ local NetworkMgr = require("ui/network/manager")
 local Notification = require("ui/widget/notification")
 local UIManager = require("ui/uimanager")
 local util = require("util")
-local _ = require("gettext")
+local _ = require("neodb_i18n")
 
 --- Fallback app name, for platforms that do not report a device model.
 local SOFTWARE_NAME = "KOReader"
@@ -232,26 +232,31 @@ end
 --- NeoDB shelves, in the order we present them.
 Util.SHELVES = { "wishlist", "progress", "complete", "dropped" }
 
-local SHELF_LABELS = {
-    wishlist = _("Want to read"),
-    progress = _("Reading"),
-    complete = _("Finished"),
-    dropped  = _("Dropped"),
-}
+local function shelfLabels()
+    return {
+        wishlist = _("Want to read"),
+        progress = _("Reading"),
+        complete = _("Finished"),
+        dropped  = _("Dropped"),
+    }
+end
 
 function Util.shelfLabel(shelf)
-    return SHELF_LABELS[shelf] or _("Not marked")
+    return shelfLabels()[shelf] or _("Not marked")
 end
 
 --- NeoDB visibility levels (0 is the most open).
-local VISIBILITY_LABELS = {
-    [0] = _("Public"),
-    [1] = _("Followers only"),
-    [2] = _("Private"),
-}
+local function visibilityLabels()
+    return {
+        [0] = _("Public"),
+        [1] = _("Followers only"),
+        [2] = _("Private"),
+    }
+end
 
 function Util.visibilityLabel(visibility)
-    return VISIBILITY_LABELS[visibility] or VISIBILITY_LABELS[0]
+    local labels = visibilityLabels()
+    return labels[visibility] or labels[0]
 end
 
 Util.VISIBILITIES = { 0, 1, 2 }
@@ -268,15 +273,18 @@ is new, having no NeoDB level of its own.
 ]]
 Util.POST_VISIBILITIES = { "public", "unlisted", "private", "direct" }
 
-local POST_VISIBILITY_LABELS = {
-    public   = _("Public"),
-    unlisted = _("Unlisted"),
-    private  = _("Followers only"),
-    direct   = _("Private"),
-}
+local function postVisibilityLabels()
+    return {
+        public   = _("Public"),
+        unlisted = _("Unlisted"),
+        private  = _("Followers only"),
+        direct   = _("Private"),
+    }
+end
 
 function Util.postVisibilityLabel(visibility)
-    return POST_VISIBILITY_LABELS[visibility] or POST_VISIBILITY_LABELS.public
+    local labels = postVisibilityLabels()
+    return labels[visibility] or labels.public
 end
 
 --[[--

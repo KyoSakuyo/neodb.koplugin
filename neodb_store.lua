@@ -23,10 +23,13 @@ Store.__index = Store
 --- Preferences and their defaults. Anything not listed here has no default.
 local DEFAULTS = {
     default_visibility     = 0,       -- public
-    post_to_fediverse      = false,   -- don't broadcast unless asked
+    post_to_fediverse      = true,    -- crosspost by default; each composer can override
     progress_unit          = "auto",  -- auto | page | percentage
     auto_mark_finished     = false,
     quote_as_blockquote    = true,
+    quote_position         = "after",  -- after | before | none | custom
+    note_attach_progress   = true,
+    note_save_local        = true,
 
     --[[--
     The two "defaults for a new book" switches.

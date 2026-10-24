@@ -171,6 +171,7 @@ and colour filters.
 | `neodb_annotations.lua` | Mirroring KOReader's own highlights and notes to NeoDB |
 | `neodb_exporter.lua` | NeoDB as a target in KOReader's "Export highlights" |
 | `neodb_util.lua` | ISBN checksums, star rendering, JSON-null scrubbing, helpers |
+| `neodb_i18n.lua`, `neodb_zh_cn.lua` | Plugin-local localization and Simplified Chinese catalog |
 | `spec/` | Tests, and the KOReader stubs they run against |
 
 Sibling modules are `neodb_`-prefixed because KOReader puts every plugin
@@ -183,7 +184,8 @@ with another plugin's.
 ./spec/run.sh
 ```
 
-Two harnesses run, `spec/harness.lua` and `spec/harness_exporter.lua`, against
+Three harnesses run, `spec/harness.lua`, `spec/harness_exporter.lua` and
+`spec/harness_i18n.lua`, against
 the KOReader stubs in `spec/stubs.lua`. No device and no network are involved.
 A failing check prints expected against actual and the run exits non-zero, so it
 works as a commit hook.
@@ -212,7 +214,7 @@ is a `NONE` sentinel in `spec/harness.lua` for "this field is absent".
 
 ## What CI adds
 
-`.github/workflows/test.yml` runs both harnesses on every push and pull request,
+`.github/workflows/test.yml` runs all three harnesses on every push and pull request,
 plus two gates the harnesses cannot cover:
 
 - every module is compiled, which catches one added and not wired in yet;
