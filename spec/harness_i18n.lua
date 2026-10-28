@@ -58,7 +58,7 @@ for message in pairs(used) do
         print("  WARNING: missing Chinese translation: " .. message)
     end
 end
-check.ok(count > 0, "source strings were scanned")
+check.ok(count > 300, "coverage includes the complete plugin")
 for message, translated in pairs(catalog) do
     if not used[message] then print("  WARNING: unused translation: " .. message) end
     check.eq(placeholders(translated), placeholders(message), "placeholders: " .. message)
@@ -84,4 +84,63 @@ check.eq(T(_("Post %1 highlights and notes from “%2” to NeoDB?\n\nEach one b
     "将《Dune》中的 12 条高亮和笔记发布到 NeoDB？\n\n每条内容都会成为一篇独立笔记，无法在此撤回。",
     "Chinese can reorder placeholders")
 
+check.section("Bilingual composer, menu actions and API payloads")
+local Actions = require("neodb_actions")
+local Store = require("neodb_store")
+local Api = require("neodb_api")
+local Util = require("neodb_util")
+local NeoDB = require("main")
+for _idx, language in ipairs({ "zh_CN", "C" }) do
+    gettext.current_lang = language
+    Stubs.reset()
+    Stubs.online = false
+    local store = Store:new()
+    store:setInstance("https://example.org")
+    store:setToken("test-only")
+    store:set("quote_position", "after")
+    store:set("quote_as_blockquote", true)
+    store:set("post_to_fediverse", true)
+    store:set("selection_crosspost", true)
+    store:set("note_title_style", "decorated")
+    store:set("quote_intro_style", "decorated")
+    store:set("default_visibility", 0)
+    local settings = Stubs.newSidecar("/books/i18n.epub", {})
+    store:setLink(settings, { uuid = "book", title = "Dune" })
+    local ui = {
+        document = { file = "/books/i18n.epub", getPageCount = function() return 100 end },
+        doc_settings = settings,
+        getCurrentPage = function() return 48 end,
+        toc = { getTocTitleByPage = function() return "Chapter One" end },
+        highlight = { addToHighlightDialog = function(self, id, factory) self[id] = factory end },
+    }
+    local ctx = { ui = ui, store = store, api = Api:new{ store = store } }
+    NeoDB.addHighlightAction({ ui = ui, ctx = ctx })
+    check.eq(ui.highlight["14_neodb_note"]({}).text, _("Add note & share"), "localized note action " .. language)
+    check.eq(Util.visibilityLabel(0), _("Public"), "visibility follows language " .. language)
+    check.eq(Util.shelfLabel("complete"), _("Finished"), "shelf follows language " .. language)
+    check.eq(Util.postVisibilityLabel("private"), _("Followers only"), "social visibility follows language " .. language)
+    check.eq(Api.describeError("queue_full"), _("Too many uploads are already waiting. Upload them first, under Tools → NeoDB → Uploads."),
+        "errors follow language " .. language)
+    Actions.addNote(ctx, { quote = "A passage", save_note = function() error("local save is disabled in this test") end })
+    local dialog = Stubs.lastShown("InputDialog")
+    check.eq(dialog.title, _("Add note & share"), "composer title " .. language)
+    check.eq(dialog:label("progress"), T(_("At: %1"), "48%"), "progress label " .. language)
+    check.eq(dialog:label("visibility"), T(_("Visible to: %1"), _("Public")), "visibility label " .. language)
+    check.eq(dialog:label("fediverse"), _("Crosspost: on"), "crosspost label " .. language)
+    check.eq(dialog:label("quote_position"), _("Quote: below note"), "quote label " .. language)
+    check.eq(dialog:getNoteTitle(), language == "zh_CN"
+        and "📖 读书笔记｜《Dune》· Chapter One · 48%" or "📖 Reading notes | Dune · Chapter One · 48%",
+        "generated title " .. language)
+    dialog:press("save_local")
+    check.eq(dialog:label("post"), _("Share only"), "share-only button " .. language)
+    dialog:typeText("我的文字 / My own words")
+    dialog:press("post")
+    local queue = store:getQueue()
+    local op = queue[#queue]
+    check.eq(op.body.content, "我的文字 / My own words\n\n" .. _("Quoted passage: 👇") .. "\n\n> A passage",
+        "only the introduction is translated; user text is unchanged " .. language)
+    check.eq(op.body.visibility, 0, "visibility API value is not translated " .. language)
+    check.eq(op.body.progress_type, "percentage", "progress API value is not translated " .. language)
+    check.eq(op.body.post_to_fediverse, true, "crosspost flag is retained " .. language)
+end
 check.finish()

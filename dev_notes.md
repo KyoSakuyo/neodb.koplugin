@@ -171,6 +171,7 @@ and colour filters.
 | `neodb_annotations.lua` | Mirroring KOReader's own highlights and notes to NeoDB |
 | `neodb_exporter.lua` | NeoDB as a target in KOReader's "Export highlights" |
 | `neodb_util.lua` | ISBN checksums, star rendering, JSON-null scrubbing, helpers |
+| `neodb_i18n.lua`, `neodb_zh_cn.lua` | Plugin-local localization and generated Simplified Chinese catalog |
 | `spec/` | Tests, and the KOReader stubs they run against |
 
 Sibling modules are `neodb_`-prefixed because KOReader puts every plugin
@@ -289,3 +290,24 @@ Incorrect translation placeholders still fail tests. `--check` on the generator
 checks that the committed runtime catalog matches the PO source; it does not
 require translations for newly introduced source strings. Labels are cached per
 language so normal rendering does not repeatedly allocate lookup tables.
+
+The note editor uses KOReader v2026.07.1 widget internals only for its optimized
+layout. A guarded resize falls back to a standard InputDialog and a title button,
+preserving both drafts. Test the fallback with a forced resize exception as well
+as normal keyboard resizing. Simulator checks do not establish e-ink flash behavior.
+
+Run the optional widget smoke test from a KOReader installation directory, with
+an isolated temporary profile (never your normal KOReader settings directory):
+
+```sh
+NEODB_UI_TEST_DIR=$(mktemp -d)
+export NEODB_UI_TEST_DIR
+KO_HOME="$NEODB_UI_TEST_DIR" NEODB_PLUGIN_DIR=/path/to/neodb.koplugin \
+NEODB_UI_LANGUAGE=zh_CN SDL_VIDEODRIVER=dummy SDL_RENDER_DRIVER=software \
+EMULATE_READER_W=600 EMULATE_READER_H=800 \
+./luajit /path/to/neodb.koplugin/spec/smoke_notedialog.lua
+```
+
+Repeat with `NEODB_UI_LANGUAGE=C` for English. Screenshots are saved in the
+isolated profile. The test injects resize failures, verifies draft preservation,
+and exercises the standard editor's title button and keyboard reinitialization.

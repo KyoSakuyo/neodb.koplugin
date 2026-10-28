@@ -32,6 +32,9 @@ msgstr "已上传 %1 项"
 msgid "%1 waiting, but the upload queue is full — upload it first, under Tools → NeoDB → Uploads"
 msgstr "还有 %1 条待上传，但队列已满；请先在“工具 → NeoDB → 上传”中完成上传"
 
+msgid "%1 · %2"
+msgstr "%1· %2"
+
 msgid "%1%"
 msgstr "%1%"
 
@@ -53,11 +56,11 @@ msgstr "添加笔记"
 msgid "Add note"
 msgstr "添加笔记"
 
+msgid "Add note & share"
+msgstr "添加笔记&分享"
+
 msgid "Add note…"
 msgstr "添加笔记…"
-
-msgid "Add your thoughts (optional)"
-msgstr "添加你的想法（可选）"
 
 msgid "Address of the service used for QR code sign-in. Leave empty to turn that option off."
 msgstr "二维码登录所用的服务地址。留空可关闭此选项。"
@@ -67,6 +70,9 @@ msgstr "同时向关注者发布每一条分享的高亮。"
 
 msgid "Anything waiting to upload is sent quietly whenever the device goes online, whatever put it online. This never turns Wi-Fi on by itself and never interrupts you. With this off, uploads wait until you open a book or send them from the Uploads menu."
 msgstr "设备联网后，静默上传所有排队内容，无论因何联网。不会自行打开 Wi-Fi，也不会打断阅读。关闭后，待上传内容会等到打开书籍或在“上传”菜单中手动发送时上传。"
+
+msgid "Applies to new selections. Sharing an existing annotation starts with local saving off."
+msgstr "用于新选中的文字。分享已有批注时默认关闭本地保存。"
 
 msgid "As %1"
 msgstr "以 %1 的身份"
@@ -80,6 +86,9 @@ msgstr "进度：%1"
 msgid "At: not attached"
 msgstr "进度：不附带"
 
+msgid "Attach reading progress by default"
+msgstr "默认附带阅读进度"
+
 msgid "Authorization code"
 msgstr "授权验证码"
 
@@ -92,8 +101,23 @@ msgstr "在浏览器中授权"
 msgid "Automatic"
 msgstr "自动"
 
+msgid "Automatic note title"
+msgstr "自动笔记标题"
+
 msgid "Book details"
 msgstr "书籍详情"
+
+msgid "Book title and chapter"
+msgstr "书名＋章节"
+
+msgid "Book title and progress"
+msgstr "书名＋进度"
+
+msgid "Book title only"
+msgstr "仅书名"
+
+msgid "Book: %1"
+msgstr "《%1》"
 
 msgid "By %1"
 msgstr "作者：%1"
@@ -146,6 +170,9 @@ msgstr "无法读取你的 NeoDB 状态"
 msgid "Could not register with %1.\n\n%2"
 msgstr "无法向 %1 注册。\n\n%2"
 
+msgid "Could not save the note. Please select the text again."
+msgstr "无法保存笔记，请重新选择文字后再试。"
+
 msgid "Could not sign in with that code. Codes expire quickly — try requesting a new one."
 msgstr "无法使用此验证码登录。验证码有效期很短，请重新申请。"
 
@@ -154,6 +181,9 @@ msgstr "无法通过 %1 开始登录。\n\n%2"
 
 msgid "Create a token at %1/developer/ and type it here."
 msgstr "请在 %1/developer/ 创建令牌，然后在此输入。"
+
+msgid "Crosspost selected text"
+msgstr "同步发布选中文字"
 
 msgid "Crosspost shared highlights"
 msgstr "将分享的高亮同步发布到社交网络"
@@ -169,6 +199,18 @@ msgstr "同步发布：开"
 
 msgid "Crossposting shared highlights is on, so your followers will see all of them."
 msgstr "高亮的同步发布已开启，你的关注者会看到全部内容。"
+
+msgid "Custom quote introduction"
+msgstr "自定义引文引导语"
+
+msgid "Custom title template"
+msgstr "自定义标题模板"
+
+msgid "Custom…"
+msgstr "自定义…"
+
+msgid "Default quote mode"
+msgstr "默认引用方式"
 
 msgid "Default visibility: %1"
 msgstr "默认可见范围：%1"
@@ -203,6 +245,9 @@ msgstr "弃读"
 msgid "Each book gets this question one time."
 msgstr "每本书只会询问一次。"
 
+msgid "Edit title"
+msgstr "编辑标题"
+
 msgid "Enter a page number."
 msgstr "请输入页码。"
 
@@ -220,6 +265,9 @@ msgstr "将此后在本书中创建的每条高亮和笔记作为笔记分享到
 
 msgid "Everything else here needs an account to talk to."
 msgstr "其他功能需要先登录账号。"
+
+msgid "Excerpt:"
+msgstr "摘录："
 
 msgid "Find book"
 msgstr "查找书籍"
@@ -239,6 +287,9 @@ msgstr "已读"
 msgid "Followers only"
 msgstr "仅关注者"
 
+msgid "From the book:"
+msgstr "书中写道："
+
 msgid "Highlight from “%1”"
 msgstr "《%1》中的高亮"
 
@@ -247,6 +298,9 @@ msgstr "我已获得验证码"
 
 msgid "ISBN %1"
 msgstr "ISBN：%1"
+
+msgid "Initial choices when sharing selected text. Changes in the composer apply only to that post. Global visibility and quote formatting are configured separately."
+msgstr "设置选中文字后分享时的默认选项，分享窗口内的调整仅用于当次发布。全局可见范围和引用格式单独设置。"
 
 msgid "Last progress sent: %1 %2"
 msgstr "上次发送的进度：%1 %2"
@@ -383,6 +437,9 @@ msgstr "未评分"
 msgid "No token file found.\n\nCreate an access token at %1/developer/, save it as a text file named %2, and copy it to either of these locations:\n\n%3\n\nThen try again."
 msgstr "未找到令牌文件。\n\n请在 %1/developer/ 创建访问令牌，将其保存为名为 %2 的文本文件，并复制到以下任一位置：\n\n%3\n\n然后重试。"
 
+msgid "None"
+msgstr "无"
+
 msgid "None of those books are linked to NeoDB."
 msgstr "这些书籍都尚未关联到 NeoDB。"
 
@@ -407,8 +464,11 @@ msgstr "《%1》的笔记"
 msgid "Note posted to NeoDB."
 msgstr "笔记已发布到 NeoDB。"
 
-msgid "Note title"
-msgstr "笔记标题"
+msgid "Note text"
+msgstr "笔记正文"
+
+msgid "Note text (optional)"
+msgstr "笔记正文（选填）"
 
 msgid "Nothing on NeoDB matched “%1”."
 msgstr "NeoDB 上没有与“%1”匹配的结果。"
@@ -425,8 +485,14 @@ msgstr "NeoDB 状态：%1"
 msgid "On “%1”"
 msgstr "关于《%1》"
 
+msgid "Only applies to Add note & share. Other posts use the global crossposting setting."
+msgstr "仅用于“添加笔记&分享”。其他发布操作使用全局同步发布设置。"
+
 msgid "Open the authorization page on your phone or computer, sign in, and approve access.\n\nNeoDB will then show you a short code. Come back here and tap \"I have the code\"."
 msgstr "请在手机或电脑上打开授权页面，登录并允许访问。\n\nNeoDB 随后会显示一个简短的验证码。请返回此处点击“我已获得验证码”。"
+
+msgid "Original text:"
+msgstr "原文："
 
 msgid "Other instance…"
 msgstr "其他实例…"
@@ -463,6 +529,12 @@ msgstr "已丢弃待上传内容。"
 
 msgid "Percentage"
 msgstr "百分比"
+
+msgid "Placed before the quotation, whether the quotation is above or below your note."
+msgstr "引导语放在引文前，适用于引文在笔记上方或下方的两种情况。"
+
+msgid "Plain text"
+msgstr "纯文本"
 
 msgid "Post"
 msgstr "发布"
@@ -533,6 +605,27 @@ msgstr "公开"
 msgid "Quote highlights as block quotes"
 msgstr "将高亮格式化为引用块"
 
+msgid "Quote introduction"
+msgstr "引文引导语"
+
+msgid "Quote: above note"
+msgstr "引用：正文上方"
+
+msgid "Quote: below note"
+msgstr "引用：正文下方"
+
+msgid "Quote: custom"
+msgstr "引用：自定义"
+
+msgid "Quote: none"
+msgstr "引用：无"
+
+msgid "Quoted passage:"
+msgstr "引文如下："
+
+msgid "Quoted passage: 👇"
+msgstr "引文如下：👇"
+
 msgid "Rate & comment"
 msgstr "评分与短评"
 
@@ -553,6 +646,9 @@ msgstr "从文件读取令牌"
 
 msgid "Reading"
 msgstr "在读"
+
+msgid "Reading notes | %1"
+msgstr "读书笔记｜《%1》"
 
 msgid "Reading your NeoDB status for this book…"
 msgstr "正在读取本书在 NeoDB 上的状态…"
@@ -584,8 +680,20 @@ msgstr "正在移除…"
 msgid "Save"
 msgstr "保存"
 
+msgid "Save & share"
+msgstr "保存并分享"
+
 msgid "Save anyway"
 msgstr "仍然保存"
+
+msgid "Save locally: off"
+msgstr "保存到本地：关"
+
+msgid "Save locally: on"
+msgstr "保存到本地：开"
+
+msgid "Save notes locally by default"
+msgstr "默认保存笔记到本地"
 
 msgid "Saved to NeoDB."
 msgstr "已保存到 NeoDB。"
@@ -611,6 +719,9 @@ msgstr "更换关键词搜索…"
 msgid "Searching NeoDB for “%1”…"
 msgstr "正在 NeoDB 上搜索“%1”…"
 
+msgid "Selection sharing defaults"
+msgstr "选中分享默认设置"
+
 msgid "Send"
 msgstr "发送"
 
@@ -623,9 +734,6 @@ msgstr "正在发送到 NeoDB…"
 msgid "Sends where you are in this book to NeoDB every hour while you read, and when the book is closed — whenever the position moved. Queued quietly; nothing turns on Wi-Fi."
 msgstr "阅读时每小时，以及关闭本书时，如阅读位置发生变化，便向 NeoDB 更新进度。上传会静默排队，不会自动打开 Wi-Fi。"
 
-msgid "Set"
-msgstr "设置"
-
 msgid "Settings"
 msgstr "设置"
 
@@ -635,8 +743,8 @@ msgstr "本书设置"
 msgid "Share a quote"
 msgstr "分享引文"
 
-msgid "Share on NeoDB"
-msgstr "分享到 NeoDB"
+msgid "Share only"
+msgstr "仅分享"
 
 msgid "Show QR code"
 msgstr "显示二维码"
@@ -728,8 +836,14 @@ msgstr "NeoDB 服务器返回了无法识别的内容。"
 msgid "The NeoDB server took too long to answer."
 msgstr "NeoDB 服务器响应超时。"
 
+msgid "The book was closed. The note could not be saved."
+msgstr "书籍已关闭，无法保存笔记。"
+
 msgid "The note is empty."
 msgstr "笔记内容为空。"
+
+msgid "The original highlight was deleted. The note could not be saved."
+msgstr "原高亮已被删除，无法保存笔记。"
 
 msgid "The pairing service did not return a usable sign-in."
 msgstr "配对服务未返回有效的登录信息。"
@@ -773,14 +887,11 @@ msgstr "这条动态有 %1 个字符，大多数 NeoDB 服务器最多接受 %2 
 msgid "This sign-in link has expired or was already used.\n\nStart again to get a fresh one."
 msgstr "此登录链接已过期或已被使用。\n\n请重新开始以获取新链接。"
 
+msgid "Title (optional)"
+msgstr "标题（选填）"
+
 msgid "Title, author, or ISBN."
 msgstr "书名、作者或 ISBN。"
-
-msgid "Title: %1"
-msgstr "标题：%1"
-
-msgid "Title: none"
-msgstr "标题：无"
 
 msgid "Too many uploads are already waiting. Upload them first, under Tools → NeoDB → Uploads."
 msgstr "待上传内容过多。请先在“工具 → NeoDB → 上传”中完成上传。"
@@ -820,6 +931,9 @@ msgstr "不公开列出的动态不会显示在公共时间线上。"
 
 msgid "Untitled"
 msgstr "无标题"
+
+msgid "Untitled book"
+msgstr "未命名书籍"
 
 msgid "Update progress"
 msgstr "更新进度"
@@ -872,6 +986,9 @@ msgstr "使用其他实例"
 msgid "Use the token found in\n%1?"
 msgstr "使用在以下文件中找到的令牌？\n%1"
 
+msgid "Use {book}, {chapter} and {progress}. Missing metadata becomes empty text."
+msgstr "可使用 {book}（书名）、{chapter}（章节）、{progress}（进度）。缺少的信息会替换为空文本。"
+
 msgid "Used by the QR code sign-in, which lets you choose a server and sign in on your phone. It only ever holds one sign-in for a few minutes. Clear it to hide that option."
 msgstr "用于二维码登录，让你在手机上选择服务器并登录。每次登录信息只暂存几分钟。清空地址可隐藏此选项。"
 
@@ -902,6 +1019,9 @@ msgstr "读到已关联书籍的最后一页时，将其 NeoDB 状态设为“�
 msgid "Who can see this?"
 msgstr "谁可以看见？"
 
+msgid "With emoji"
+msgstr "带表情符号"
+
 msgid "Writes a post on your NeoDB account, with no book attached to it. Queued like everything else if you are offline."
 msgstr "在 NeoDB 账号上发布一条不关联书籍的动态。离线时会加入上传队列。"
 
@@ -916,9 +1036,6 @@ msgstr "当前进度为 %1。"
 
 msgid "Your account lives on one instance; pick the one you signed up with."
 msgstr "每个账号属于一个实例；请选择你注册账号的实例。"
-
-msgid "Your note"
-msgstr "笔记正文"
 
 msgid "Your rating"
 msgstr "你的评分"
@@ -973,3 +1090,6 @@ msgstr "《%1》"
 
 msgid "✓ No rating"
 msgstr "✓ 未评分"
+
+msgid "📖 Reading notes | %1"
+msgstr "📖 读书笔记｜《%1》"
