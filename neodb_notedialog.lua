@@ -10,7 +10,6 @@ local logger = require("logger")
 
 local NoteDialog = MultiInputDialog:extend{
     focused_field_idx = 2,
-    is_movable = false,
 }
 
 function NoteDialog:init()
@@ -22,6 +21,12 @@ function NoteDialog:init()
     self._building_fields = true
     MultiInputDialog.init(self)
     self._building_fields = false
+    -- MultiInputDialog replaces the frame built by InputDialog. Reattach its
+    -- native movable wrapper to the new frame so header dragging still works.
+    if self.is_movable then
+        self.movable[1] = self.dialog_frame
+        self[1][1] = self.movable
+    end
     -- Enter in the title moves to the body; it never submits the post.
     self.input_fields[1].enter_callback = function()
         self:onSwitchFocus(self.input_fields[2])
@@ -70,6 +75,8 @@ function NoteDialog:useStandardEditor()
     end
     self:free()
     self.input_fields = nil
+    -- Let InputText use its standard focus and keyboard policy in this mode.
+    self.onSwitchFocus = false
     self.note_title, self.input = title, body
     self.allow_newline, self.use_available_height = true, true
     self.input_hint = self.note_hint
@@ -133,7 +140,18 @@ function NoteDialog:resizeFieldsUnsafe()
     group:resetLayout()
     if self[1].dimen.h ~= available then changed = true end
     self[1].dimen.h = available
-    if changed then UIManager:setDirty(self, "ui") end
+    if changed then
+        -- Both containers cache their size after painting. Keep their hit and
+        -- drag bounds in sync when the keyboard changes the body's height.
+        local size = self.dialog_frame:getSize()
+        if self.dialog_frame.dimen then
+            self.dialog_frame.dimen.w, self.dialog_frame.dimen.h = size.w, size.h
+        end
+        if self.movable and self.movable.dimen then
+            self.movable.dimen.w, self.movable.dimen.h = size.w, size.h
+        end
+        UIManager:setDirty(self, "ui")
+    end
 end
 
 function NoteDialog:onShowKeyboard(...)
@@ -147,10 +165,15 @@ function NoteDialog:onCloseKeyboard()
 end
 
 function NoteDialog:onSwitchFocus(field)
-    if self._fallback then return self:onShowKeyboard() end
     if field == self._input_widget then
-        -- Tapping the active field must not reset its cursor or scroll position.
-        self:onShowKeyboard()
+        -- Match InputText's normal tap behavior without rebuilding the field
+        -- (which would reset its cursor/scroll position).
+        if not ((Device:hasKeyboard() or Device:hasScreenKB())
+            and G_reader_settings:nilOrFalse("virtual_keyboard_enabled")) then
+            self:onShowKeyboard()
+        end
+        Device:startTextInput()
+        field.focused = true
         return
     end
     self._switching_focus = true

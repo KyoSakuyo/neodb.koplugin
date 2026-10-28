@@ -61,7 +61,9 @@ Most features are under the **☰ → Tools → NeoDB** menu:
 
 Choose **Add note & share** to write a note about selected text and share it to
 NeoDB. The title and scrollable body are edited in one window. The editor adapts
-to the on-screen keyboard. The default title is empty.
+to the on-screen keyboard and follows KOReader's virtual keyboard setting when
+a hardware keyboard is available. Drag the window by its header, as with the
+native note editor. The default title is empty.
 
 The quote button cycles through four modes:
 

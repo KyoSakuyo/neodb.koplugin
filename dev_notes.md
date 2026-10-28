@@ -218,9 +218,10 @@ is a `NONE` sentinel in `spec/harness.lua` for "this field is absent".
 plus two gates the harnesses cannot cover:
 
 - every module is compiled, which catches one added and not wired in yet;
-- `G_reader_settings` is grepped for outside `neodb_exporter.lua`. It is a
-  global, so compiling proves nothing about it, and only the exporter may touch
-  it: it keeps its switch in KOReader's own settings.
+- `G_reader_settings` is grepped for outside `neodb_exporter.lua` and
+  `neodb_notedialog.lua`. The exporter keeps its switch in KOReader's settings;
+  the note dialog only reads the native virtual keyboard preference. Other
+  plugin settings stay in the plugin store.
 
 `.github/workflows/release.yml` builds `neodb.koplugin.zip` when a release is
 published: the Lua modules and the licence only, inside an already correctly
@@ -311,3 +312,6 @@ EMULATE_READER_W=600 EMULATE_READER_H=800 \
 Repeat with `NEODB_UI_LANGUAGE=C` for English. Screenshots are saved in the
 isolated profile. The test injects resize failures, verifies draft preservation,
 and exercises the standard editor's title button and keyboard reinitialization.
+It also checks taps with the virtual keyboard enabled/disabled, touch-only input,
+cursor preservation, and header dragging in both the two-field and fallback
+editors. Drag bounds must follow changes to the frame's height.
