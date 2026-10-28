@@ -63,7 +63,11 @@ end
 function NoteDialog:useStandardEditor()
     local title, body = self:getNoteTitle(), self:getNoteText()
     self._fallback = true
-    for _idx, field in ipairs(self.input_fields) do field:onCloseWidget() end
+    for _idx, field in ipairs(self.input_fields) do
+        -- Freeing a keyboard does not remove its window from UIManager.
+        field:onCloseKeyboard()
+        field:onCloseWidget()
+    end
     self:free()
     self.input_fields = nil
     self.note_title, self.input = title, body

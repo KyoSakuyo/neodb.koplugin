@@ -90,11 +90,15 @@ title_editor:setInputText("Fallback title")
 title_editor.buttons[1][2].callback()
 assert(dialog:getNoteTitle() == "Fallback title")
 UIManager:close(dialog)
+assert(#UIManager._window_stack == 1 and UIManager._window_stack[1].widget == background,
+    "Closing composer must not leave an orphan keyboard")
 -- Also exercise incompatibility on the first initialization.
 local resize = NoteDialog.resizeFieldsUnsafe
 NoteDialog.resizeFieldsUnsafe = function() error("simulated missing layout") end
 dialog = open()
 assert(dialog._fallback and dialog:getNoteText() == "Original note")
 UIManager:close(dialog)
+assert(#UIManager._window_stack == 1 and UIManager._window_stack[1].widget == background,
+    "Closing composer must not leave an orphan keyboard")
 NoteDialog.resizeFieldsUnsafe = resize
 print("Review UI and fallback checks passed: " .. language)
