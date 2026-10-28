@@ -45,7 +45,31 @@ end
 local background = require("ui/widget/container/widgetcontainer"):new{}
 function background:paintTo(bb) bb:fill(require("ffi/blitbuffer").COLOR_WHITE) end
 UIManager:show(background)
+local Geom = require("ui/geometry")
+local Event = require("ui/event")
+local function tapField(field)
+    UIManager:_repaint()
+    local bounds = field._frame_textwidget.dimen
+    field:onTapTextBox(nil, { pos = Geom:new{x = bounds.x + 10, y = bounds.y + 10} })
+end
+local function checkDrag(dialog)
+    UIManager:_repaint()
+    local frame = dialog.dialog_frame.dimen
+    local x, y = frame.x, frame.y
+    local start = Geom:new{x = x + frame.w / 2, y = y + 10}
+    dialog:handleEvent(Event:new("Gesture", {ges = "touch", pos = start}))
+    dialog:handleEvent(Event:new("Gesture", {
+        ges = "pan", pos = start, relative = {x = 12, y = 8},
+    }))
+    dialog:handleEvent(Event:new("Gesture", {ges = "pan_release", pos = start}))
+    UIManager:_repaint()
+    assert(dialog.dialog_frame.dimen.x == x + 12 and dialog.dialog_frame.dimen.y == y + 8,
+        "Dragging the header must move the visible composer")
+    assert(dialog.movable.dimen.h == dialog.dialog_frame.dimen.h,
+        "Drag bounds must match the current frame: " .. dialog.movable.dimen.h .. " / " .. dialog.dialog_frame.dimen.h)
+end
 local dialog = open()
+checkDrag(dialog)
 assert(dialog:getNoteTitle() == "")
 assert(dialog.button_table:getButtonById("fediverse").text == tr("Crosspost: off"))
 dialog.input_fields[1]:setText("My title")
@@ -70,6 +94,7 @@ UIManager.setDirty = dirty
 dialog.resizeFieldsUnsafe = function() error("simulated incompatible widget API") end
 dialog:resizeFields()
 assert(dialog._fallback)
+checkDrag(dialog)
 assert(dialog:getNoteTitle() == "My title" and dialog:getNoteText() == body)
 dialog:setNoteText("Fallback edited body")
 assert(dialog:getNoteText() == "Fallback edited body")
@@ -101,4 +126,43 @@ UIManager:close(dialog)
 assert(#UIManager._window_stack == 1 and UIManager._window_stack[1].widget == background,
     "Closing composer must not leave an orphan keyboard")
 NoteDialog.resizeFieldsUnsafe = resize
-print("Review UI and fallback checks passed: " .. language)
+-- Physical-keyboard users may disable the virtual keyboard. Tapping either
+-- field must honor that choice; touch-only devices must still allow typing.
+local has_keyboard, has_screen_keyboard = Device.hasKeyboard, Device.hasScreenKB
+for _, mode in ipairs({
+    { physical = true, enabled = false, visible = false },
+    { physical = true, enabled = true, visible = true },
+    { physical = false, enabled = false, visible = true },
+}) do
+    Device.hasKeyboard = function() return mode.physical end
+    Device.hasScreenKB = function() return false end
+    G_reader_settings:saveSetting("virtual_keyboard_enabled", mode.enabled)
+    dialog = open()
+    assert(dialog:isKeyboardVisible() == mode.visible)
+    for _, index in ipairs({2, 2, 1, 1, 2}) do
+        dialog:onCloseKeyboard()
+        tapField(dialog.input_fields[index])
+        assert(dialog._input_widget == dialog.input_fields[index])
+        assert(dialog:isKeyboardVisible() == mode.visible,
+            "Tapping a field must honor the native keyboard preference")
+    end
+    local field = dialog._input_widget
+    local charpos, top = field.charpos, field.top_line_num
+    dialog:onSwitchFocus(field)
+    assert(field.charpos == charpos and field.top_line_num == top,
+        "Refocusing the active field must preserve cursor and scroll")
+    field:onTextInput(" typed")
+    assert(dialog:getNoteText():find(" typed", 1, true), "Text input must remain active")
+    checkDrag(dialog)
+    dialog.resizeFieldsUnsafe = function() error("simulated fallback for keyboard policy") end
+    dialog:resizeFields()
+    dialog:onCloseKeyboard()
+    tapField(dialog._input_widget)
+    assert(dialog:isKeyboardVisible() == mode.visible,
+        "Fallback editor must honor the native keyboard preference")
+    checkDrag(dialog)
+    UIManager:close(dialog)
+    assert(#UIManager._window_stack == 1, "Closing must not leave any keyboard")
+end
+Device.hasKeyboard, Device.hasScreenKB = has_keyboard, has_screen_keyboard
+print("Review UI, keyboard preference, dragging and fallback checks passed: " .. language)
