@@ -71,8 +71,8 @@ msgstr "同时向关注者发布每一条分享的高亮。"
 msgid "Anything waiting to upload is sent quietly whenever the device goes online, whatever put it online. This never turns Wi-Fi on by itself and never interrupts you. With this off, uploads wait until you open a book or send them from the Uploads menu."
 msgstr "设备联网后，静默上传所有排队内容，无论因何联网。不会自行打开 Wi-Fi，也不会打断阅读。关闭后，待上传内容会等到打开书籍或在“上传”菜单中手动发送时上传。"
 
-msgid "Applies to new selections. Sharing an existing annotation starts with local saving off."
-msgstr "用于新选中的文字。分享已有批注时默认关闭本地保存。"
+msgid "Applies to new selections. Sharing an existing annotation starts with local saving off. Highlight & share always saves a highlight."
+msgstr "用于新选中的文字。分享已有批注时默认关闭本地保存。“高亮&分享”始终保存高亮。"
 
 msgid "As %1"
 msgstr "以 %1 的身份"
@@ -106,18 +106,6 @@ msgstr "自动笔记标题"
 
 msgid "Book details"
 msgstr "书籍详情"
-
-msgid "Book title and chapter"
-msgstr "书名＋章节"
-
-msgid "Book title and progress"
-msgstr "书名＋进度"
-
-msgid "Book title only"
-msgstr "仅书名"
-
-msgid "Book: %1"
-msgstr "《%1》"
 
 msgid "By %1"
 msgstr "作者：%1"
@@ -170,6 +158,9 @@ msgstr "无法读取你的 NeoDB 状态"
 msgid "Could not register with %1.\n\n%2"
 msgstr "无法向 %1 注册。\n\n%2"
 
+msgid "Could not save the highlight. Please select the text again."
+msgstr "无法保存高亮，请重新选择文字后再试。"
+
 msgid "Could not save the note. Please select the text again."
 msgstr "无法保存笔记，请重新选择文字后再试。"
 
@@ -199,15 +190,6 @@ msgstr "同步发布：开"
 
 msgid "Crossposting shared highlights is on, so your followers will see all of them."
 msgstr "高亮的同步发布已开启，你的关注者会看到全部内容。"
-
-msgid "Custom quote introduction"
-msgstr "自定义引文引导语"
-
-msgid "Custom title template"
-msgstr "自定义标题模板"
-
-msgid "Custom…"
-msgstr "自定义…"
 
 msgid "Default quote mode"
 msgstr "默认引用方式"
@@ -266,9 +248,6 @@ msgstr "将此后在本书中创建的每条高亮和笔记作为笔记分享到
 msgid "Everything else here needs an account to talk to."
 msgstr "其他功能需要先登录账号。"
 
-msgid "Excerpt:"
-msgstr "摘录："
-
 msgid "Find book"
 msgstr "查找书籍"
 
@@ -287,11 +266,26 @@ msgstr "已读"
 msgid "Followers only"
 msgstr "仅关注者"
 
-msgid "From the book:"
-msgstr "书中写道："
+msgid "Highlight & share"
+msgstr "高亮&分享"
 
 msgid "Highlight from “%1”"
 msgstr "《%1》中的高亮"
+
+msgid "Highlight saved, but sharing could not be queued: %1"
+msgstr "高亮已保存，分享未加入上传队列：%1"
+
+msgid "Highlight saved. Link this book from the NeoDB menu before sharing."
+msgstr "高亮已保存；请先在 NeoDB 菜单关联本书后再分享。"
+
+msgid "Highlight saved. Sign in from the NeoDB menu before sharing."
+msgstr "高亮已保存；请先在 NeoDB 菜单登录后再分享。"
+
+msgid "Highlight saved; sharing queued."
+msgstr "已保存高亮，分享已加入上传队列。"
+
+msgid "Highlight shared on NeoDB."
+msgstr "高亮已分享到 NeoDB。"
 
 msgid "I have the code"
 msgstr "我已获得验证码"
@@ -485,14 +479,11 @@ msgstr "NeoDB 状态：%1"
 msgid "On “%1”"
 msgstr "关于《%1》"
 
-msgid "Only applies to Add note & share. Other posts use the global crossposting setting."
-msgstr "仅用于“添加笔记&分享”。其他发布操作使用全局同步发布设置。"
+msgid "Only applies to Add note & share and Highlight & share. Other posts use the global crossposting setting."
+msgstr "仅用于“添加笔记&分享”和“高亮&分享”。其他发布操作使用全局同步发布设置。"
 
 msgid "Open the authorization page on your phone or computer, sign in, and approve access.\n\nNeoDB will then show you a short code. Come back here and tap \"I have the code\"."
 msgstr "请在手机或电脑上打开授权页面，登录并允许访问。\n\nNeoDB 随后会显示一个简短的验证码。请返回此处点击“我已获得验证码”。"
-
-msgid "Original text:"
-msgstr "原文："
 
 msgid "Other instance…"
 msgstr "其他实例…"
@@ -529,9 +520,6 @@ msgstr "已丢弃待上传内容。"
 
 msgid "Percentage"
 msgstr "百分比"
-
-msgid "Placed before the quotation, whether the quotation is above or below your note."
-msgstr "引导语放在引文前，适用于引文在笔记上方或下方的两种情况。"
 
 msgid "Plain text"
 msgstr "纯文本"
@@ -746,6 +734,9 @@ msgstr "分享引文"
 msgid "Share only"
 msgstr "仅分享"
 
+msgid "Sharing failed: %1. The local highlight was kept."
+msgstr "分享失败：%1。本地高亮已保留。"
+
 msgid "Show QR code"
 msgstr "显示二维码"
 
@@ -841,6 +832,9 @@ msgstr "书籍已关闭，无法保存笔记。"
 
 msgid "The note is empty."
 msgstr "笔记内容为空。"
+
+msgid "The original highlight is no longer available. Please select the text again."
+msgstr "原来的高亮已不存在，请重新选中文字。"
 
 msgid "The original highlight was deleted. The note could not be saved."
 msgstr "原高亮已被删除，无法保存笔记。"
@@ -986,9 +980,6 @@ msgstr "使用其他实例"
 msgid "Use the token found in\n%1?"
 msgstr "使用在以下文件中找到的令牌？\n%1"
 
-msgid "Use {book}, {chapter} and {progress}. Missing metadata becomes empty text."
-msgstr "可使用 {book}（书名）、{chapter}（章节）、{progress}（进度）。缺少的信息会替换为空文本。"
-
 msgid "Used by the QR code sign-in, which lets you choose a server and sign in on your phone. It only ever holds one sign-in for a few minutes. Clear it to hide that option."
 msgstr "用于二维码登录，让你在手机上选择服务器并登录。每次登录信息只暂存几分钟。清空地址可隐藏此选项。"
 
@@ -1093,3 +1084,39 @@ msgstr "✓ 未评分"
 
 msgid "📖 Reading notes | %1"
 msgstr "📖 读书笔记｜《%1》"
+
+msgid "Book: %1"
+msgstr "《%1》"
+
+msgid "Book title only"
+msgstr "仅书名"
+
+msgid "Book title and chapter"
+msgstr "书名＋章节"
+
+msgid "Book title and progress"
+msgstr "书名＋进度"
+
+msgid "Excerpt:"
+msgstr "摘录："
+
+msgid "Original text:"
+msgstr "原文："
+
+msgid "From the book:"
+msgstr "书中写道："
+
+msgid "Custom…"
+msgstr "自定义…"
+
+msgid "Custom title template"
+msgstr "自定义标题模板"
+
+msgid "Custom quote introduction"
+msgstr "自定义引文引导语"
+
+msgid "Use {book}, {chapter} and {progress}. Missing metadata becomes empty text."
+msgstr "可使用 {book}（书名）、{chapter}（章节）、{progress}（进度）。缺少的信息会替换为空文本。"
+
+msgid "Placed before the quotation, whether the quotation is above or below your note."
+msgstr "引导语放在引文前，适用于引文在笔记上方或下方的两种情况。"

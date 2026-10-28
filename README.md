@@ -83,6 +83,13 @@ but always starts **off for existing annotations** to protect their local notes.
 Turn it on explicitly to edit an existing local note. An empty body in automatic
 quote mode saves a highlight without a note. Cancelling creates no annotation.
 
+**Highlight & share** immediately saves a highlight and queues its quotation,
+without opening an editor or picker. A brief notification acknowledges queueing
+and reports delivery or permanent failure; the local highlight is kept on failure.
+A rejected queued share releases its pending annotation marker so it can be
+shared again. Sign in and link the book beforehand; otherwise the highlight is
+saved and a notification explains the missing setup.
+
 Under **NeoDB → Settings → Selection sharing defaults**, configure quote mode,
 attaching progress, saving new notes locally, crossposting selected text,
 automatic titles and quote introductions. Composer overrides apply only to that
@@ -100,7 +107,7 @@ template with `{book}`, `{chapter}` and `{progress}` placeholders.
 Introduction presets include `Quoted passage:`, `Quoted passage: 👇`, `Excerpt:`,
 `Original text:` and `From the book:`. **Custom…** accepts your own introduction,
 including multiple lines. The introduction precedes the quotation regardless of
-whether that quotation appears above or below the note. Sharing uses the same
+whether that quotation appears above or below the note. Both actions use the same
 introduction setting, including posts without note text. Custom mode adds neither
 an automatic introduction nor an extra quote.
 

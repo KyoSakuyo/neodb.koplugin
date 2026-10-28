@@ -1019,6 +1019,56 @@ do
     check.eq(#ui.annotation.annotations, 0, "empty-body share-only creates no highlight")
     check.eq(plugin.store:queueCount(), 1, "empty-body share-only still shares the quote")
 
+    check.section("One-tap highlight and share")
+    plugin, ui = setup(nil, true, function(_, reader)
+        reader.toc = { getTocTitleByPage = function() return "Chapter One" end }
+    end)
+    check.eq(#ui.annotation.annotations, 1, "one tap immediately saves one highlight")
+    check.eq(ui.annotation.annotations[1].note, nil, "one tap creates no note")
+    check.eq(Stubs.sidecars[BOOK].annotations[1].text, "Selected text.\n选中文字。",
+        "the highlight is persisted immediately")
+    check.eq(ui.highlight.selected_text, nil, "the selection menu closes")
+    check.eq(Stubs.lastShown("InputDialog"), nil, "no composer opens")
+    check.eq(Stubs.lastShown("ButtonDialog"), nil, "no picker opens")
+    check.eq(Stubs.lastShown("ConfirmBox"), nil, "no confirmation opens")
+    check.eq(#Stubs.alerts, 0, "no popup opens")
+    check.eq(Stubs.lastNotification(), "Highlight saved; sharing queued.", "queueing is acknowledged without a dialog")
+    local quick_op = plugin.store:getQueue()[1]
+    check.eq(quick_op.body.title, "📖 Reading notes | Dune · Chapter One · 25%",
+        "one tap uses the same generated title")
+    check.eq(quick_op.body.content, "Quoted passage: 👇\n\n> Selected text.\n> 选中文字。",
+        "one tap sends only the introduction and quote")
+    check.eq(quick_op.body.post_to_fediverse, true, "one tap defaults to Crosspost on")
+    check.eq(quick_op.annotation.key, ui.annotation.annotations[1].datetime,
+        "the post is tied to the highlight")
+    check.eq(Annotations.queueNew(plugin.ctx), 0, "the automatic mirror does not duplicate it")
+    UIManager:runTasks()
+    check.eq(plugin.store:queueCount(), 1, "offline sharing remains queued")
+    check.eq(#Stubs.alerts, 0, "offline sharing raises no popup")
+
+    plugin, ui = setup(nil, true, function(p)
+        p.store:set("note_attach_progress", false)
+        p.store:set("note_save_local", false)
+        p.store:set("selection_crosspost", false)
+        p.store:set("default_visibility", 2)
+        p.store:set("quote_as_blockquote", false)
+        p.store:set("quote_position", "none")
+    end)
+    quick_op = plugin.store:getQueue()[1]
+    check.eq(#ui.annotation.annotations, 1, "quick sharing always saves its highlight")
+    check.eq(quick_op.body.progress_type, nil, "quick sharing respects disabled progress")
+    check.eq(quick_op.body.progress_value, nil, "quick sharing omits disabled progress value")
+    check.eq(quick_op.body.post_to_fediverse, false, "quick sharing respects the crosspost preference")
+    check.eq(quick_op.body.visibility, 2, "quick sharing respects the visibility preference")
+    check.eq(quick_op.body.content, "Quoted passage: 👇\n\nSelected text.\n选中文字。",
+        "quick sharing always includes its quote and respects quote formatting")
+
+    plugin, ui = setup(annotation{ note = "Private local note", pos0 = "start", pos1 = "end" }, true)
+    check.eq(#ui.annotation.annotations, 1, "sharing an existing highlight does not duplicate it")
+    check.eq(ui.annotation.annotations[1].note, "Private local note", "existing local notes are preserved")
+    check.eq(plugin.store:getQueue()[1].body.content, "Quoted passage: 👇\n\n> The spice must flow.",
+        "existing note text is excluded from the quick share")
+
     existing = annotation{ note = "> Edited passage\n\nMy custom note", neodb_custom_note = true,
         pos0 = "start", pos1 = "end" }
     plugin, ui, dialog = setup(existing, false, function(p) p.store:set("quote_position", "custom") end)
@@ -1041,7 +1091,53 @@ do
     plugin, ui, dialog = setup(existing, false, function(p) p.store:set("quote_position", "custom") end)
     check.eq(dialog:getNoteText(), existing.note, "legacy custom notes without metadata are not duplicated")
 
+    plugin, ui = setup(nil, true)
+    local failed_key = ui.annotation.annotations[1].datetime
+    Stubs.online = true
+    recordCalls(plugin.api, function() return false, "not_found", 404 end)
+    UIManager:runTasks()
+    UIManager:runTasks()
+    check.eq(plugin.store:queueCount(), 0, "a permanently rejected quick share leaves the queue")
+    check.eq(plugin.store:getLink(ui.doc_settings).annotation_sync.sent[failed_key], nil,
+        "permanent rejection releases the quick share's pending marker")
+    check.ok(Stubs.lastNotification():find("Sharing failed:", 1, true) ~= nil, "permanent failure is shown")
+    check.eq(#ui.annotation.annotations, 1, "permanent failure retains the local highlight")
 
+    local requests
+    plugin, ui = setup(nil, true, function(p)
+        Stubs.online = true
+        requests = recordCalls(p.api, function() return true, { uuid = "quick-note" }, 200 end)
+    end)
+    UIManager:runTasks()
+    UIManager:runTasks()
+    check.eq(plugin.store:queueCount(), 0, "online quick sharing drains the queue")
+    check.eq(#requests, 1, "online quick sharing sends once")
+    check.eq(#Stubs.alerts, 0, "online sharing opens no popup")
+    check.eq(Stubs.lastNotification(), "Highlight shared on NeoDB.", "online success is acknowledged without a dialog")
+
+    plugin, ui = setup(nil, true, function(p) p.store:setToken(nil) end)
+    check.eq(#ui.annotation.annotations, 1, "signed-out users still get their highlight")
+    check.eq(plugin.store:queueCount(), 0, "signed-out users do not enqueue a post")
+    check.eq(Stubs.lastShown("ConfirmBox"), nil, "sign-in is not launched")
+    check.ok(Stubs.lastNotification() ~= nil, "a missing sign-in is explained briefly")
+
+    plugin, ui = setup(nil, true, function(p) p.store.getLink = function() return nil end end)
+    check.eq(#ui.annotation.annotations, 1, "an unlinked book still gets its highlight")
+    check.eq(plugin.store:queueCount(), 0, "an unlinked book queues nothing")
+    check.eq(Stubs.lastShown("ConfirmBox"), nil, "linking is not launched")
+
+    plugin, ui = setup(nil, true, function(p) p.store.enqueue = function() return false end end)
+    check.eq(#ui.annotation.annotations, 1, "queue failure preserves the highlight")
+    check.eq(plugin.store:queueCount(), 0, "a full queue accepts no post")
+    local state = plugin.store:getLink(ui.doc_settings).annotation_sync
+    check.eq(state.sent[ui.annotation.annotations[1].datetime], nil,
+        "a refused enqueue removes the sent marker")
+    check.eq(#Stubs.alerts, 0, "queue failure uses no popup")
+
+    plugin, ui = setup(nil, true, function(_, reader)
+        reader.highlight.saveHighlight = function() return nil end
+    end)
+    check.eq(plugin.store:queueCount(), 0, "a failed highlighter never shares")
 end
 
 check.section("Annotations: uploading the backlog")

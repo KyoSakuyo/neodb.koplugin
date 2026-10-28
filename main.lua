@@ -153,11 +153,14 @@ function NeoDB:init()
     ]]
     self.api.on_op_sent = function(op, data)
         Annotations.recordSent(self.ctx, op, data)
+        if op.notify_result then Util.notify(_("Highlight shared on NeoDB.")) end
     end
 
     self.api.on_op_failed = function(op, data, code)
         Annotations.recordFailed(self.ctx, op)
-
+        if op.notify_result then
+            Util.notify(T(_("Sharing failed: %1. The local highlight was kept."), self.api:errorMessage(data, code)))
+        end
     end
 
     self:onDispatcherRegisterActions()
@@ -268,7 +271,14 @@ function NeoDB:addHighlightAction()
             end,
         }
     end)
-
+    self.ui.highlight:addToHighlightDialog("15_neodb_highlight", function(this, index)
+        return {
+            text = _("Highlight & share"),
+            callback = function()
+                Actions.highlightAndShare(self.ctx, this, index)
+            end,
+        }
+    end)
 end
 
 -- Menu ----------------------------------------------------------------------
@@ -832,13 +842,13 @@ function NeoDB:settingsMenu()
         },
         {
             text = _("Save notes locally by default"),
-            help_text = _("Applies to new selections. Sharing an existing annotation starts with local saving off."),
+            help_text = _("Applies to new selections. Sharing an existing annotation starts with local saving off. Highlight & share always saves a highlight."),
             checked_func = function() return store:get("note_save_local") end,
             callback = function() store:toggle("note_save_local") end,
         },
         {
             text = _("Crosspost selected text"),
-            help_text = _("Only applies to Add note & share. Other posts use the global crossposting setting."),
+            help_text = _("Only applies to Add note & share and Highlight & share. Other posts use the global crossposting setting."),
             checked_func = function() return store:get("selection_crosspost") end,
             callback = function() store:toggle("selection_crosspost") end,
         },

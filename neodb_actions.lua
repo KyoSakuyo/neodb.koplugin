@@ -880,6 +880,75 @@ local function quoteWithIntroduction(ctx, quote)
     return quote
 end
 
+-- One tap, no composer, color picker or network prompt. Save locally first,
+-- durably enqueue the post, then use the existing silent upload/retry path.
+function Actions.highlightAndShare(ctx, highlight, index)
+    local selection = highlight.selected_text
+    if not selection or not selection.pos0 or not selection.pos1 then return end
+    local quote = Util.trim(util.cleanupSelectedText(selection.text or ""))
+    if quote == "" then return end
+    local saved = index and ctx.ui.annotation.annotations[index] or nil
+    if not saved and not index then
+        local new_index = highlight:saveHighlight()
+        saved = new_index and ctx.ui.annotation.annotations[new_index]
+    end
+    highlight:onClose()
+    if not saved then
+        Util.notify(index and _("The original highlight is no longer available. Please select the text again.")
+            or _("Could not save the highlight. Please select the text again."))
+        return
+    end
+    ctx.ui.annotation:onSaveSettings()
+
+    -- These prerequisites cannot be fixed without opening an interactive flow.
+    -- Keep the highlight and report the missing setup without launching one.
+    if not ctx.store:isLoggedIn() then
+        Util.notify(_("Highlight saved. Sign in from the NeoDB menu before sharing."))
+        return
+    end
+    local link = ctx.store:getLink(ctx.ui.doc_settings)
+    if not link then
+        Util.notify(_("Highlight saved. Link this book from the NeoDB menu before sharing."))
+        return
+    end
+    if ctx.store:get("quote_as_blockquote") then
+        quote = "> " .. quote:gsub("\n", "\n> ")
+    end
+    local progress_type, value = Actions.readingPosition(ctx)
+    local op = {
+        method = "POST",
+        path = ctx.api:notePath(link.uuid),
+        label = T(_("Note on “%1”"), link.title or "?"),
+        body = {
+            title = defaultNoteTitle(ctx, link),
+            content = quoteWithIntroduction(ctx, quote),
+            visibility = ctx.store:get("default_visibility"),
+            post_to_fediverse = ctx.store:get("selection_crosspost"),
+            sensitive = false,
+        },
+        annotation = {
+            item = link.uuid,
+            key = saved.datetime,
+            file = ctx.ui.document.file,
+        },
+    }
+    if ctx.store:get("note_attach_progress") then
+        op.body.progress_type = progress_type
+        op.body.progress_value = tostring(value)
+    end
+    local marked = annotations().markQueued(ctx, saved.datetime)
+    op.annotation.release_on_failure = marked
+    op.notify_result = true
+    local status, data, code = ctx.api:submit(op, false)
+    if status == "failed" then
+        if marked then annotations().unmarkQueued(ctx, saved.datetime) end
+        Util.notify(T(_("Highlight saved, but sharing could not be queued: %1"), ctx.api:errorMessage(data, code)))
+        return
+    end
+    Util.notify(_("Highlight saved; sharing queued."))
+    UIManager:nextTick(function() Actions.flushSoon(ctx) end)
+end
+
 -- Keep the selection separately: closing its menu clears it, and cancelling the
 -- composer must not create a highlight or alter an existing note.
 function Actions.addNoteAndShare(ctx, highlight, index)

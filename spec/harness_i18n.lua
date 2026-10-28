@@ -72,11 +72,11 @@ end
 check.section("Language selection and fallback")
 for _idx, lang in ipairs({ "zh_CN", "zh-CN", "zh_CN.UTF-8", "zh_Hans", "zh_SG", "zh" }) do
     gettext.current_lang = lang
-    check.eq(_("Settings"), "设置", "Simplified Chinese locale " .. lang)
+    check.eq(_("Highlight & share"), "高亮&分享", "Simplified Chinese locale " .. lang)
 end
 for _idx, lang in ipairs({ "C", "en", "en_US", "en_GB", "fr", "zh_TW" }) do
     gettext.current_lang = lang
-    check.eq(_("Settings"), "Settings", "English/KOReader fallback for " .. lang)
+    check.eq(_("Highlight & share"), "Highlight & share", "English/KOReader fallback for " .. lang)
 end
 gettext.current_lang = "zh_CN"
 check.eq(_("A new untranslated message"), "A new untranslated message", "unknown messages remain readable")
@@ -116,6 +116,7 @@ for _idx, language in ipairs({ "zh_CN", "C" }) do
     local ctx = { ui = ui, store = store, api = Api:new{ store = store } }
     NeoDB.addHighlightAction({ ui = ui, ctx = ctx })
     check.eq(ui.highlight["14_neodb_note"]({}).text, _("Add note & share"), "localized note action " .. language)
+    check.eq(ui.highlight["15_neodb_highlight"]({}).text, _("Highlight & share"), "localized highlight action " .. language)
     check.eq(Util.visibilityLabel(0), _("Public"), "visibility follows language " .. language)
     check.eq(Util.shelfLabel("complete"), _("Finished"), "shelf follows language " .. language)
     check.eq(Util.postVisibilityLabel("private"), _("Followers only"), "social visibility follows language " .. language)
